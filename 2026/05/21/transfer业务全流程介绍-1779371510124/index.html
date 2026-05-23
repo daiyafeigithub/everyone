@@ -1,0 +1,1346 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>transfer业务全流程介绍 | 每日一</title><meta name="author" content="Flynn"><meta name="copyright" content="Flynn"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一、系统概览   层级 技术栈 职责    Web 前端 Vue 3 + Vite + Tailwind + Element Plus 主站：上传、编辑、格式设置、预览、导出   微信小程序 原生小程序 登录、文档转换、历史、个人中心   后端 Spring Boot 3.2 + JPA + Security + JWT REST API、文档转换&#x2F;导出、AI 管线   数据 SQLit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="transfer业务全流程介绍">
+<meta property="og:url" content="https://daiyafeigithub.github.io/everyone/2026/05/21/transfer%E4%B8%9A%E5%8A%A1%E5%85%A8%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D-1779371510124/index.html">
+<meta property="og:site_name" content="每日一">
+<meta property="og:description" content="一、系统概览   层级 技术栈 职责    Web 前端 Vue 3 + Vite + Tailwind + Element Plus 主站：上传、编辑、格式设置、预览、导出   微信小程序 原生小程序 登录、文档转换、历史、个人中心   后端 Spring Boot 3.2 + JPA + Security + JWT REST API、文档转换&#x2F;导出、AI 管线   数据 SQLit">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://api.dujin.org/bing/1920.php">
+<meta property="article:published_time" content="2026-05-21T13:49:43.992Z">
+<meta property="article:modified_time" content="2026-05-21T13:51:50.164Z">
+<meta property="article:author" content="Flynn">
+<meta property="article:tag" content="AI项目">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://api.dujin.org/bing/1920.php"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "transfer业务全流程介绍",
+  "url": "https://daiyafeigithub.github.io/everyone/2026/05/21/transfer%E4%B8%9A%E5%8A%A1%E5%85%A8%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D-1779371510124/",
+  "image": "https://api.dujin.org/bing/1920.php",
+  "datePublished": "2026-05-21T13:49:43.992Z",
+  "dateModified": "2026-05-21T13:51:50.164Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Flynn",
+      "url": "https://daiyafeigithub.github.io/everyone"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/everyone/img/favicon.png"><link rel="canonical" href="https://daiyafeigithub.github.io/everyone/2026/05/21/transfer%E4%B8%9A%E5%8A%A1%E5%85%A8%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D-1779371510124/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/everyone/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/everyone/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'transfer业务全流程介绍',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/everyone/css/beautiful-mermaid.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/everyone/img/avatar.png" onerror="this.onerror=null;this.src='/everyone/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/everyone/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/everyone/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/everyone/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/everyone/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/everyone/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/everyone/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/everyone/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/everyone/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url(https://api.dujin.org/bing/1920.php);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/everyone/"><span class="site-name">每日一</span></a><a class="nav-page-title" href="/everyone/"><span class="site-name">transfer业务全流程介绍</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/everyone/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/everyone/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/everyone/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/everyone/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/everyone/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">transfer业务全流程介绍</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-21T13:49:43.992Z" title="发表于 2026-05-21 21:49:43">2026-05-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-21T13:51:50.164Z" title="更新于 2026-05-21 21:51:50">2026-05-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/everyone/categories/%E9%A1%B9%E7%9B%AE/">项目</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:180,&quot;messagePrev&quot;:&quot;本文最后更新于&quot;,&quot;messageNext&quot;:&quot;天前，文章内容可能已经过时。&quot;,&quot;postUpdate&quot;:&quot;2026-05-21 21:51:50&quot;}" hidden></div><h2 id="一、系统概览"><a href="#一、系统概览" class="headerlink" title="一、系统概览"></a>一、系统概览</h2><table>
+<thead>
+<tr>
+<th>层级</th>
+<th>技术栈</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Web 前端</td>
+<td>Vue 3 + Vite + Tailwind + Element Plus</td>
+<td>主站：上传、编辑、格式设置、预览、导出</td>
+</tr>
+<tr>
+<td>微信小程序</td>
+<td>原生小程序</td>
+<td>登录、文档转换、历史、个人中心</td>
+</tr>
+<tr>
+<td>后端</td>
+<td>Spring Boot 3.2 + JPA + Security + JWT</td>
+<td>REST API、文档转换&#x2F;导出、AI 管线</td>
+</tr>
+<tr>
+<td>数据</td>
+<td>SQLite (<code>db.sqlite3</code>)</td>
+<td>用户、文档记录、游客、订单</td>
+</tr>
+<tr>
+<td>部署</td>
+<td>Docker Compose + Nginx</td>
+<td>前端 8080、后端 8000</td>
+</tr>
+<tr>
+<td>外部依赖</td>
+<td>Pandoc、Apache POI、PDFBox、iText、CommonMark、Python+python-docx</td>
+<td>格式转换与导出</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="二、系统架构图"><a href="#二、系统架构图" class="headerlink" title="二、系统架构图"></a>二、系统架构图</h2><div class="beautiful-mermaid"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1495.3822499999999 793.2" width="1495.3822499999999" height="793.2" style="--bg:var(--bm-bg);--fg:var(--bm-fg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<g class="subgraph" data-id="Clients" data-label="客户端">
+  <rect x="489.18849999999986" y="40" width="358.78999999999996" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="489.18849999999986" y="40" width="358.78999999999996" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="501.18849999999986" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">客户端</text>
+</g>
+<g class="subgraph" data-id="Gateway" data-label="网关层">
+  <rect x="600.5767499999998" y="213.8" width="227.337" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="600.5767499999998" y="213.8" width="227.337" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="612.5767499999998" y="227.8" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">网关层</text>
+</g>
+<g class="subgraph" data-id="Backend" data-label="后端 Spring Boot :8000">
+  <rect x="40" y="381.6" width="1380.6269999999997" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="40" y="381.6" width="1380.6269999999997" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="52" y="395.6" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">后端 Spring Boot :8000</text>
+</g>
+<g class="subgraph" data-id="Storage" data-label="存储">
+  <rect x="83.65924999999993" y="603.4000000000001" width="463.567" height="149.8" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="83.65924999999993" y="603.4000000000001" width="463.567" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="95.65924999999993" y="617.4000000000001" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">存储</text>
+</g>
+<g class="subgraph" data-id="External" data-label="外部引擎">
+  <rect x="575.2262499999999" y="627.4000000000001" width="880.156" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="575.2262499999999" y="627.4000000000001" width="880.156" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="587.2262499999999" y="641.4000000000001" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">外部引擎</text>
+</g>
+<polyline class="edge" data-from="WEB" data-to="NGINX" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="740.6084999999998,137.8 740.6084999999998,195.8 714.2452499999998,195.8 714.2452499999998,257.8" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="MP" data-to="Backend" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="563.2134999999998,137.8 563.2134999999998,369.6 589.5767499999998,369.6 589.5767499999998,369.6 646.9109999999998,369.6 646.9109999999998,381.6" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="NGINX" data-to="Backend" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="714.2452499999998,311.6 714.2452499999998,369.6 656.9109999999998,369.6 656.9109999999998,381.6" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="AUTH" data-to="SQLITE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="144.03549999999996,479.40000000000003 144.03549999999996,585.4000000000001 126.98058333333324,585.4000000000001 126.98058333333324,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DOC" data-to="SQLITE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1128.4519999999998,479.40000000000003 1128.4519999999998,578.4000000000001 140.64124999999993,578.4000000000001 140.64124999999993,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DOC" data-to="STATIC" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1128.4519999999998,479.40000000000003 1128.4519999999998,578.4000000000001 306.1802499999999,578.4000000000001 306.1802499999999,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DOC" data-to="PANDOC" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1128.4519999999998,479.40000000000003 1128.4519999999998,578.4000000000001 883.99925,578.4000000000001 883.99925,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DOC" data-to="POI" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1128.4519999999998,479.40000000000003 1128.4519999999998,578.4000000000001 1011.3767499999999,578.4000000000001 1011.3767499999999,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DOC" data-to="PDFBOX" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1128.4519999999998,479.40000000000003 1128.4519999999998,578.4000000000001 637.3952499999999,578.4000000000001 637.3952499999999,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DOC" data-to="ITEXT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1128.4519999999998,479.40000000000003 1128.4519999999998,578.4000000000001 761.8087499999999,578.4000000000001 761.8087499999999,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="AI" data-to="TEMP" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1326.2244999999996,479.40000000000003 1326.2244999999996,578.4000000000001 480.9817499999999,578.4000000000001 480.9817499999999,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="AI" data-to="PYTHON" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1326.2244999999996,479.40000000000003 1326.2244999999996,578.4000000000001 1179.13875,578.4000000000001 1179.13875,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="AI" data-to="LLM" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1326.2244999999996,479.40000000000003 1326.2244999999996,578.4000000000001 1365.4257499999999,578.4000000000001 1365.4257499999999,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="IMG" data-to="STATIC" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="327.7289999999999,479.40000000000003 327.7289999999999,513.4000000000001 209.14824999999996,513.4000000000001 209.14824999999996,671.4000000000001 273.99458333333325,671.4000000000001 273.99458333333325,677.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<g class="node" data-id="WEB" data-label="Web 前端
+transfer-words-frontend" data-shape="rectangle">
+  <rect x="649.2384999999999" y="84" width="182.73999999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="740.6084999999999" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="740.6084999999999" dy="-3.9000000000000012">Web 前端</tspan><tspan x="740.6084999999999" dy="16.900000000000002">transfer-words-frontend</tspan></text>
+</g>
+<g class="node" data-id="MP" data-label="微信小程序
+miniprogram" data-shape="rectangle">
+  <rect x="505.18849999999986" y="84" width="116.05" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="563.2134999999998" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="563.2134999999998" dy="-3.9000000000000012">微信小程序</tspan><tspan x="563.2134999999998" dy="16.900000000000002">miniprogram</tspan></text>
+</g>
+<g class="node" data-id="NGINX" data-label="Nginx :8080
+静态资源 + API 反向代理" data-shape="rectangle">
+  <rect x="616.5767499999998" y="257.8" width="195.337" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="714.2452499999998" y="284.7" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="714.2452499999998" dy="-3.9000000000000012">Nginx :8080</tspan><tspan x="714.2452499999998" dy="16.900000000000002">静态资源 + API 反向代理</tspan></text>
+</g>
+<g class="node" data-id="AUTH" data-label="认证模块
+JWT / 注册登录 / 微信" data-shape="rectangle">
+  <rect x="56" y="425.6" width="176.07099999999997" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="144.03549999999998" y="452.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="144.03549999999998" dy="-3.9000000000000012">认证模块</tspan><tspan x="144.03549999999998" dy="16.900000000000002">JWT / 注册登录 / 微信</tspan></text>
+</g>
+<g class="node" data-id="DOC" data-label="文档核心模块
+上传·转换·导出·预览" data-shape="rectangle">
+  <rect x="1037.0819999999999" y="425.6" width="182.73999999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1128.4519999999998" y="452.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1128.4519999999998" dy="-3.9000000000000012">文档核心模块</tspan><tspan x="1128.4519999999998" dy="16.900000000000002">上传·转换·导出·预览</tspan></text>
+</g>
+<g class="node" data-id="ANALYSIS" data-label="分析模块
+文档分析·格式校验" data-shape="rectangle">
+  <rect x="423.38699999999994" y="425.6" width="167.92" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="507.3469999999999" y="452.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="507.3469999999999" dy="-3.9000000000000012">分析模块</tspan><tspan x="507.3469999999999" dy="16.900000000000002">文档分析·格式校验</tspan></text>
+</g>
+<g class="node" data-id="AI" data-label="AI 增强模块
+IR·LLM·代码生成" data-shape="rectangle">
+  <rect x="1247.8219999999997" y="425.6" width="156.805" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1326.2244999999996" y="452.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1326.2244999999996" dy="-3.9000000000000012">AI 增强模块</tspan><tspan x="1326.2244999999996" dy="16.900000000000002">IR·LLM·代码生成</tspan></text>
+</g>
+<g class="node" data-id="SYS" data-label="系统模块
+健康检查·模板·Pandoc状态" data-shape="rectangle">
+  <rect x="619.3069999999998" y="425.6" width="221.27199999999996" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="729.9429999999998" y="452.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="729.9429999999998" dy="-3.9000000000000012">系统模块</tspan><tspan x="729.9429999999998" dy="16.900000000000002">健康检查·模板·Pandoc状态</tspan></text>
+</g>
+<g class="node" data-id="IMG" data-label="图片模块
+Word 图片提取" data-shape="rectangle">
+  <rect x="260.0709999999999" y="425.6" width="135.31599999999997" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="327.7289999999999" y="452.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="327.7289999999999" dy="-3.9000000000000012">图片模块</tspan><tspan x="327.7289999999999" dy="16.900000000000002">Word 图片提取</tspan></text>
+</g>
+<g class="node" data-id="MD" data-label="Markdown 模块
+MD↔Word 互转" data-shape="rectangle">
+  <rect x="868.5789999999997" y="425.6" width="140.503" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="938.8304999999997" y="452.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="938.8304999999997" dy="-3.9000000000000012">Markdown 模块</tspan><tspan x="938.8304999999997" dy="16.900000000000002">MD↔Word 互转</tspan></text>
+</g>
+<g class="node" data-id="SQLITE" data-label="SQLite" data-shape="cylinder">
+  <rect x="99.65924999999993" y="684.4000000000001" width="81.964" height="36.900000000000006" fill="var(--_node-fill)" stroke="none" />
+  <line x1="99.65924999999993" y1="684.4000000000001" x2="99.65924999999993" y2="721.3000000000001" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <line x1="181.62324999999993" y1="684.4000000000001" x2="181.62324999999993" y2="721.3000000000001" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <ellipse cx="140.64124999999993" cy="721.3000000000001" rx="40.982" ry="7" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <ellipse cx="140.64124999999993" cy="684.4000000000001" rx="40.982" ry="7" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="140.64124999999993" y="702.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">SQLite</text>
+</g>
+<g class="node" data-id="STATIC" data-label="static/
+uploads·previews·media" data-shape="rectangle">
+  <rect x="209.62324999999993" y="677.4000000000001" width="193.11399999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="306.1802499999999" y="704.3000000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="306.1802499999999" dy="-3.9000000000000012">static/</tspan><tspan x="306.1802499999999" dy="16.900000000000002">uploads·previews·media</tspan></text>
+</g>
+<g class="node" data-id="TEMP" data-label="temp/
+AI 工作区" data-shape="rectangle">
+  <rect x="430.7372499999999" y="677.4000000000001" width="100.489" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="480.9817499999999" y="704.3000000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="480.9817499999999" dy="-3.9000000000000012">temp/</tspan><tspan x="480.9817499999999" dy="16.900000000000002">AI 工作区</tspan></text>
+</g>
+<g class="node" data-id="PANDOC" data-label="Pandoc" data-shape="rectangle">
+  <rect x="840.0532499999999" y="677.4000000000001" width="87.892" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="883.99925" y="695.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Pandoc</text>
+</g>
+<g class="node" data-id="POI" data-label="Apache POI" data-shape="rectangle">
+  <rect x="955.9452499999999" y="677.4000000000001" width="110.863" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1011.3767499999999" y="695.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Apache POI</text>
+</g>
+<g class="node" data-id="PDFBOX" data-label="PDFBox" data-shape="rectangle">
+  <rect x="591.2262499999999" y="677.4000000000001" width="92.338" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="637.3952499999999" y="695.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">PDFBox</text>
+</g>
+<g class="node" data-id="ITEXT" data-label="iText PDF" data-shape="rectangle">
+  <rect x="711.5642499999999" y="677.4000000000001" width="100.489" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="761.8087499999999" y="695.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">iText PDF</text>
+</g>
+<g class="node" data-id="PYTHON" data-label="Python + python-docx" data-shape="rectangle">
+  <rect x="1094.80825" y="677.4000000000001" width="168.661" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1179.13875" y="695.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Python + python-docx</text>
+</g>
+<g class="node" data-id="LLM" data-label="LLM API
+OpenAI/通义千问" data-shape="rectangle">
+  <rect x="1291.4692499999999" y="677.4000000000001" width="147.913" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1365.4257499999999" y="704.3000000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1365.4257499999999" dy="-3.9000000000000012">LLM API</tspan><tspan x="1365.4257499999999" dy="16.900000000000002">OpenAI/通义千问</tspan></text>
+</g>
+</svg></div>
+
+<hr>
+<h2 id="三、核心业务流程（主路径）"><a href="#三、核心业务流程（主路径）" class="headerlink" title="三、核心业务流程（主路径）"></a>三、核心业务流程（主路径）</h2><p>这是用户最常用的「上传 → 编辑 → 设格式 → 预览 → 导出」完整链路。</p>
+<div class="beautiful-mermaid"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2724.4992499999994 2083.825" width="2724.4992499999994" height="2083.825" style="--bg:var(--bm-bg);--fg:var(--bm-fg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<polyline class="edge" data-from="START" data-to="IDENTITY" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1632.6770499999996,76.9 1632.6770499999993,124.90000000000023" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="IDENTITY" data-to="VISITOR" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="未登录" points="1601.3695499999994,218.82249999999988 1601.3695499999994,293.23 1454.9115499999998,293.23 1454.9115499999994,378.43" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="IDENTITY" data-to="USER" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="已登录" points="1632.6770499999993,250.12999999999977 1632.6770499999996,378.43" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="IDENTITY" data-to="WECHAT" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="微信" points="1663.9845499999994,218.8225000000001 1663.9845499999994,310.13 1788.2125499999993,310.13 1788.2125499999995,378.43" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="VISITOR" data-to="INPUT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1454.9115499999996,449.13 1454.9115499999996,458.68 1621.5620499999995,458.68 1621.5620499999995,468.23" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="USER" data-to="INPUT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1632.6770499999996,432.23 1632.6770499999996,458.68 1621.5620499999995,458.68 1621.5620499999995,468.23" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="WECHAT" data-to="INPUT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1788.2125499999995,432.23 1788.2125499999995,458.68 1621.5620499999995,458.68 1621.5620499999995,468.23" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="INPUT" data-to="UPLOAD" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="上传 Word/PDF" points="1601.4415499999996,505.13 1601.4415499999996,517.1300000000001 1309.67455,517.1300000000001 1309.67455,597.4300000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="INPUT" data-to="MD_INPUT" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="直接输入/粘贴 Markdown" points="1621.5620499999995,505.13 1621.5620499999995,910.395" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="INPUT" data-to="PANDOC_IN" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="上传 .md/.txt/.html" points="1641.6825499999995,505.13 1641.6825499999995,830.095 2581.2732499999993,830.095 2581.2732499999993,1277.4399999999996" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="UPLOAD" data-to="CONVERT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1309.67455,634.33 1309.67455,682.33" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="CONVERT" data-to="PANDOC_TRY" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1309.67455,736.13 1309.67455,784.13" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PANDOC_TRY" data-to="PANDOC_MD" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="是 .docx" points="1264.32505,889.9454999999999 1264.32505,959.295 1053.5855499999998,959.295 1053.58555,1063.5949999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PANDOC_TRY" data-to="POI_MD" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="否" points="1294.5580499999999,920.1784999999999 1294.5580499999999,971.295 1231.7215499999998,971.295 1231.72155,1063.5949999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PANDOC_TRY" data-to="PDF_MD" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label=".pdf" points="1324.79105,920.1784999999999 1324.79105,971.295 1387.62755,971.295 1387.62755,1063.5949999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PANDOC_TRY" data-to="DOC_MD" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label=".doc" points="1355.02405,889.9454999999999 1355.02405,959.295 1552.05505,959.295 1552.0550499999997,1063.5949999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PANDOC_MD" data-to="META" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1053.58555,1100.495 1053.58555,1118.495 1302.8202999999999,1118.495 1302.8202999999999,1136.495" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="POI_MD" data-to="META" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1231.72155,1100.495 1231.72155,1118.495 1302.8202999999999,1118.495 1302.8202999999999,1136.495" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PDF_MD" data-to="META" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1387.62755,1100.495 1387.62755,1118.495 1302.8202999999999,1118.495 1302.8202999999999,1136.495" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DOC_MD" data-to="META" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1552.05505,1100.495 1552.05505,1118.495 1302.8202999999999,1118.495 1302.8202999999999,1136.495" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="META" data-to="EDITOR" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1302.8202999999999,1224.0949999999998 1302.8202999999999,1250.7674999999997 1364.7624999999998,1250.7674999999997 1364.7624999999998,1277.4399999999996" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="MD_INPUT" data-to="EDITOR" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1621.5620499999998,947.295 1621.5620499999998,1250.7674999999997 1364.7624999999998,1250.7674999999997 1364.7624999999998,1277.4399999999996" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EDITOR" data-to="FORMAT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1364.7624999999998,1331.2399999999996 1364.7624999999998,1346.5674999999997 553.443,1346.5674999999997 553.443,1361.8949999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="FORMAT" data-to="TEMPLATE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="553.443,1398.7949999999998 553.443,1422.4674999999997 160.269,1422.4674999999997 160.269,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="FORMAT" data-to="CUSTOM" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="553.443,1398.7949999999998 553.443,1422.4674999999997 433.253,1422.4674999999997 433.253,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="FORMAT" data-to="HISTORY_FMT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="553.443,1398.7949999999998 553.443,1422.4674999999997 673.6329999999998,1422.4674999999997 673.6329999999998,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="FORMAT" data-to="VALIDATE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="553.443,1398.7949999999998 553.443,1422.4674999999997 898.4519999999998,1422.4674999999997 898.4519999999998,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EDITOR" data-to="PREVIEW" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1364.7624999999998,1331.2399999999996 1364.7624999999998,1346.5674999999997 1385.6187333333332,1346.5674999999997 1385.6187333333332,1361.8949999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PREVIEW" data-to="FAST" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1385.6187333333332,1398.7949999999998 1385.6187333333332,1422.4674999999997 1148.0944999999997,1422.4674999999997 1148.0944999999997,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PREVIEW" data-to="PDF_PREVIEW" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1385.6187333333332,1398.7949999999998 1385.6187333333332,1422.4674999999997 1364.7624999999996,1422.4674999999997 1364.7624999999996,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PREVIEW" data-to="CONSISTENCY" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1385.6187333333332,1398.7949999999998 1385.6187333333332,1422.4674999999997 1592.9159999999995,1422.4674999999997 1592.9159999999995,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EDITOR" data-to="EXPORT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="1364.7624999999998,1331.2399999999996 1364.7624999999998,1346.5674999999997 2138.8094999999994,1346.5674999999997 2138.8094999999994,1361.8949999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EXPORT" data-to="DOCX" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2138.8094999999994,1457.4849999999997 2106.946166666666,1457.4849999999997 1842.1879999999996,1457.4849999999997 1842.1879999999996,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EXPORT" data-to="PDF_OUT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2122.877833333333,1441.5533333333333 2122.877833333333,1469.4849999999997 2019.2124999999996,1469.4849999999997 2019.2124999999996,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EXPORT" data-to="HTML_OUT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2138.8094999999994,1457.4849999999997 2138.8094999999994,1587.9549999999995 2138.8094999999994,1587.9549999999995 2138.8094999999994,1913.5749999999994" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EXPORT" data-to="MD_OUT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2138.8094999999994,1457.4849999999997 2138.8094999999994,1587.9549999999995 2259.1474999999996,1587.9549999999995 2259.1474999999996,1718.4249999999995" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EXPORT" data-to="API_EXPORT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2138.8094999999994,1457.4849999999997 2170.6728333333326,1457.4849999999997 2430.614499999999,1457.4849999999997 2430.614499999999,1446.1399999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="API_EXPORT" data-to="SAVE_OPT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2430.614499999999,1483.04 2430.6144999999997,1554.3849999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="SAVE_OPT" data-to="SAVE" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="是" points="2408.5078333333327,1664.9183333333326 2408.5078333333327,1723.0249999999996 2358.8485833333325,1723.0249999999996 2358.848583333333,1803.3249999999996" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="SAVE_OPT" data-to="DOWNLOAD" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="否" points="2452.7211666666662,1664.918333333333 2452.7211666666662,1791.3249999999996 2517.5451666666663,1791.3249999999996 2517.5451666666663,1910.0249999999994 2532.7099166666662,1910.0249999999994 2532.7099166666662,1913.5749999999994" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="SAVE" data-to="HISTORY" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2358.848583333333,1857.1249999999995 2358.8485833333325,1913.5749999999994" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="HISTORY" data-to="LOAD" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2358.848583333333,1967.3749999999993 2358.848583333333,1987.1499999999994 2249.2178333333327,1987.1499999999994 2249.2178333333327,2006.9249999999995" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="HISTORY" data-to="DELETE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2358.848583333333,1967.3749999999993 2358.848583333333,1987.1499999999994 2468.4793333333328,1987.1499999999994 2468.4793333333328,2006.9249999999995" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PANDOC_IN" data-to="PANDOC_FLOW" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2581.2732499999993,1314.3399999999997 2581.2732499999993,1361.8949999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PANDOC_FLOW" data-to="DOWNLOAD" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="2581.2732499999993,1415.6949999999997 2581.2732499999993,1913.5749999999994" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<g class="edge-label" data-from="IDENTITY" data-to="VISITOR" data-label="未登录">
+  <rect x="1427.9115499999998" y="300.23" width="53.29" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1454.5565499999998" y="315.38" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">未登录</text>
+</g>
+<g class="edge-label" data-from="IDENTITY" data-to="USER" data-label="已登录">
+  <rect x="1605.6770499999993" y="293.13" width="53.29" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1632.3220499999993" y="308.28" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">已登录</text>
+</g>
+<g class="edge-label" data-from="IDENTITY" data-to="WECHAT" data-label="微信">
+  <rect x="1767.2125499999993" y="317.13" width="41.41" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1787.9175499999992" y="332.28" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">微信</text>
+</g>
+<g class="edge-label" data-from="INPUT" data-to="UPLOAD" data-label="上传 Word/PDF">
+  <rect x="1262.67455" y="524.1300000000001" width="93.088" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1309.21855" y="539.2800000000001" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">上传 Word/PDF</text>
+</g>
+<g class="edge-label" data-from="INPUT" data-to="MD_INPUT" data-label="直接输入/粘贴 Markdown">
+  <rect x="1549.0620499999995" y="837.095" width="144.17200000000003" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1621.1480499999996" y="852.245" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">直接输入/粘贴 Markdown</text>
+</g>
+<g class="edge-label" data-from="INPUT" data-to="PANDOC_IN" data-label="上传 .md/.txt/.html">
+  <rect x="2532.2732499999993" y="1209.4849999999997" width="97.84000000000003" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="2581.1932499999994" y="1224.6349999999998" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">上传 .md/.txt/.html</text>
+</g>
+<g class="edge-label" data-from="PANDOC_TRY" data-to="PANDOC_MD" data-label="是 .docx">
+  <rect x="1024.5855499999998" y="1002.2949999999998" width="57.44799999999999" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1053.3095499999997" y="1017.4449999999998" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">是 .docx</text>
+</g>
+<g class="edge-label" data-from="PANDOC_TRY" data-to="POI_MD" data-label="否">
+  <rect x="1216.7215499999998" y="978.295" width="29.53" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1231.4865499999999" y="993.4449999999999" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">否</text>
+</g>
+<g class="edge-label" data-from="PANDOC_TRY" data-to="PDF_MD" data-label=".pdf">
+  <rect x="1370.12755" y="978.295" width="34.282" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1387.26855" y="993.4449999999999" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">.pdf</text>
+</g>
+<g class="edge-label" data-from="PANDOC_TRY" data-to="DOC_MD" data-label=".doc">
+  <rect x="1533.05505" y="1002.2949999999998" width="37.846000000000004" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="1551.97805" y="1017.4449999999998" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">.doc</text>
+</g>
+<g class="edge-label" data-from="SAVE_OPT" data-to="SAVE" data-label="是">
+  <rect x="2343.8485833333325" y="1730.0249999999996" width="29.53" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="2358.6135833333324" y="1745.1749999999997" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">是</text>
+</g>
+<g class="edge-label" data-from="SAVE_OPT" data-to="DOWNLOAD" data-label="否">
+  <rect x="2502.5451666666663" y="1848.7249999999995" width="29.53" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="2517.310166666666" y="1863.8749999999995" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">否</text>
+</g>
+<g class="node" data-id="START" data-label="用户进入系统" data-shape="stadium">
+  <rect x="1567.2420499999994" y="40" width="130.87" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1632.6770499999993" y="58.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">用户进入系统</text>
+</g>
+<g class="node" data-id="IDENTITY" data-label="身份识别" data-shape="diamond">
+  <polygon points="1632.6770499999996,124.89999999999999 1695.2920499999996,187.515 1632.6770499999996,250.13 1570.0620499999995,187.515" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1632.6770499999996" y="187.515" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">身份识别</text>
+</g>
+<g class="node" data-id="VISITOR" data-label="游客模式
+设备指纹生成 visitor_id
+free_quota=1" data-shape="rectangle">
+  <rect x="1360.9480499999995" y="378.43" width="187.92699999999996" height="70.7" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1454.9115499999996" y="413.78000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1454.9115499999996" dy="-12.350000000000001">游客模式</tspan><tspan x="1454.9115499999996" dy="16.900000000000002">设备指纹生成 visitor_id</tspan><tspan x="1454.9115499999996" dy="16.900000000000002">free_quota=1</tspan></text>
+</g>
+<g class="node" data-id="USER" data-label="注册用户
+JWT Token" data-shape="rectangle">
+  <rect x="1576.8750499999996" y="378.43" width="111.604" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1632.6770499999996" y="405.33" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1632.6770499999996" dy="-3.9000000000000012">注册用户</tspan><tspan x="1632.6770499999996" dy="16.900000000000002">JWT Token</tspan></text>
+</g>
+<g class="node" data-id="WECHAT" data-label="微信 OAuth 登录
+openid 绑定用户" data-shape="rectangle">
+  <rect x="1716.4790499999995" y="378.43" width="143.46699999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1788.2125499999995" y="405.33" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1788.2125499999995" dy="-3.9000000000000012">微信 OAuth 登录</tspan><tspan x="1788.2125499999995" dy="16.900000000000002">openid 绑定用户</tspan></text>
+</g>
+<g class="node" data-id="INPUT" data-label="INPUT" data-shape="rectangle">
+  <rect x="1581.3210499999996" y="468.23" width="80.482" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1621.5620499999995" y="486.68" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">INPUT</text>
+</g>
+<g class="node" data-id="UPLOAD" data-label="POST /upload-word-document" data-shape="rectangle">
+  <rect x="1201.26155" y="597.4300000000001" width="216.82599999999994" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1309.67455" y="615.8800000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">POST /upload-word-document</text>
+</g>
+<g class="node" data-id="MD_INPUT" data-label="Markdown 编辑器" data-shape="rectangle">
+  <rect x="1545.7530499999998" y="910.395" width="151.618" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1621.5620499999998" y="928.845" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Markdown 编辑器</text>
+</g>
+<g class="node" data-id="PANDOC_IN" data-label="POST /pandoc-convert" data-shape="rectangle">
+  <rect x="2492.4967499999993" y="1277.4399999999996" width="177.55299999999997" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2581.2732499999993" y="1295.8899999999996" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">POST /pandoc-convert</text>
+</g>
+<g class="node" data-id="CONVERT" data-label="DocumentConversionService
+Word/PDF → Markdown" data-shape="rectangle">
+  <rect x="1201.26155" y="682.33" width="216.826" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1309.67455" y="709.23" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1309.67455" dy="-3.9000000000000012">DocumentConversionService</tspan><tspan x="1309.67455" dy="16.900000000000002">Word/PDF → Markdown</tspan></text>
+</g>
+<g class="node" data-id="PANDOC_TRY" data-label="Pandoc 可用?" data-shape="diamond">
+  <polygon points="1309.67455,784.13 1385.25705,859.7125 1309.67455,935.295 1234.09205,859.7125" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1309.67455" y="859.7125" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Pandoc 可用?</text>
+</g>
+<g class="node" data-id="PANDOC_MD" data-label="Pandoc 转 MD + 提取图片" data-shape="rectangle">
+  <rect x="954.43505" y="1063.5949999999998" width="198.301" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1053.58555" y="1082.0449999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Pandoc 转 MD + 提取图片</text>
+</g>
+<g class="node" data-id="POI_MD" data-label="POI 转 MD" data-shape="rectangle">
+  <rect x="1180.73605" y="1063.5949999999998" width="101.971" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1231.72155" y="1082.0449999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">POI 转 MD</text>
+</g>
+<g class="node" data-id="PDF_MD" data-label="PDFBox 提取文本" data-shape="rectangle">
+  <rect x="1310.70705" y="1063.5949999999998" width="153.84099999999998" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1387.62755" y="1082.0449999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">PDFBox 提取文本</text>
+</g>
+<g class="node" data-id="DOC_MD" data-label="HWPF 转 MD" data-shape="rectangle">
+  <rect x="1492.5480499999999" y="1063.5949999999998" width="119.014" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1552.05505" y="1082.0449999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">HWPF 转 MD</text>
+</g>
+<g class="node" data-id="META" data-label="提取格式元数据
+source_format_settings
+paragraph_formats
+document_id" data-shape="rectangle">
+  <rect x="1212.1913" y="1136.495" width="181.25799999999998" height="87.60000000000001" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1302.8202999999999" y="1180.2949999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1302.8202999999999" dy="-20.8">提取格式元数据</tspan><tspan x="1302.8202999999999" dy="16.900000000000002">source_format_settings</tspan><tspan x="1302.8202999999999" dy="16.900000000000002">paragraph_formats</tspan><tspan x="1302.8202999999999" dy="16.900000000000002">document_id</tspan></text>
+</g>
+<g class="node" data-id="EDITOR" data-label="前端编辑区
+Markdown 内容" data-shape="rectangle">
+  <rect x="1296.3635" y="1277.4399999999996" width="136.798" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1364.7624999999998" y="1304.3399999999997" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1364.7624999999998" dy="-3.9000000000000012">前端编辑区</tspan><tspan x="1364.7624999999998" dy="16.900000000000002">Markdown 内容</tspan></text>
+</g>
+<g class="node" data-id="FORMAT" data-label="格式配置" data-shape="rectangle">
+  <rect x="502.828" y="1361.8949999999998" width="101.22999999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="553.443" y="1380.3449999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">格式配置</text>
+</g>
+<g class="node" data-id="TEMPLATE" data-label="预设模板
+GB/T 7714·中文论文·学术·商务" data-shape="rectangle">
+  <rect x="40" y="1446.1399999999999" width="240.53799999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="160.269" y="1473.04" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="160.269" dy="-3.9000000000000012">预设模板</tspan><tspan x="160.269" dy="16.900000000000002">GB/T 7714·中文论文·学术·商务</tspan></text>
+</g>
+<g class="node" data-id="CUSTOM" data-label="自定义格式面板
+字体·行距·页眉页脚·边距·缩进" data-shape="rectangle">
+  <rect x="308.538" y="1446.1399999999999" width="249.42999999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="433.253" y="1473.04" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="433.253" dy="-3.9000000000000012">自定义格式面板</tspan><tspan x="433.253" dy="16.900000000000002">字体·行距·页眉页脚·边距·缩进</tspan></text>
+</g>
+<g class="node" data-id="HISTORY_FMT" data-label="从历史记录加载格式" data-shape="rectangle">
+  <rect x="585.9679999999998" y="1446.1399999999999" width="175.32999999999998" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="673.6329999999998" y="1464.59" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">从历史记录加载格式</text>
+</g>
+<g class="node" data-id="VALIDATE" data-label="POST /validate-format-settings" data-shape="rectangle">
+  <rect x="789.2979999999998" y="1446.1399999999999" width="218.30799999999996" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="898.4519999999998" y="1464.59" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">POST /validate-format-settings</text>
+</g>
+<g class="node" data-id="PREVIEW" data-label="预览" data-shape="rectangle">
+  <rect x="1349.8237333333332" y="1361.8949999999998" width="71.59" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1385.6187333333332" y="1380.3449999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">预览</text>
+</g>
+<g class="node" data-id="FAST" data-label="快速预览 HTML
+marked + KaTeX + 自定义 CSS" data-shape="rectangle">
+  <rect x="1035.6059999999998" y="1446.1399999999999" width="224.97699999999995" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1148.0944999999997" y="1473.04" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1148.0944999999997" dy="-3.9000000000000012">快速预览 HTML</tspan><tspan x="1148.0944999999997" dy="16.900000000000002">marked + KaTeX + 自定义 CSS</tspan></text>
+</g>
+<g class="node" data-id="PDF_PREVIEW" data-label="精确预览 PDF
+POST /preview-pdf" data-shape="rectangle">
+  <rect x="1288.5829999999996" y="1446.1399999999999" width="152.35899999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1364.7624999999996" y="1473.04" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1364.7624999999996" dy="-3.9000000000000012">精确预览 PDF</tspan><tspan x="1364.7624999999996" dy="16.900000000000002">POST /preview-pdf</tspan></text>
+</g>
+<g class="node" data-id="CONSISTENCY" data-label="一致性自检
+POST /preview-consistency-check
+评分 + 风险提示" data-shape="rectangle">
+  <rect x="1468.9419999999996" y="1446.1399999999999" width="247.94799999999995" height="70.7" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1592.9159999999995" y="1481.4899999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1592.9159999999995" dy="-12.350000000000001">一致性自检</tspan><tspan x="1592.9159999999995" dy="16.900000000000002">POST /preview-consistency-check</tspan><tspan x="1592.9159999999995" dy="16.900000000000002">评分 + 风险提示</tspan></text>
+</g>
+<g class="node" data-id="EXPORT" data-label="导出" data-shape="diamond">
+  <polygon points="2138.8094999999994,1361.8949999999998 2186.6044999999995,1409.6899999999998 2138.8094999999994,1457.485 2091.0144999999993,1409.6899999999998" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2138.8094999999994" y="1409.6899999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">导出</text>
+</g>
+<g class="node" data-id="DOCX" data-label="DOCX
+POI 或 Pandoc+参考文档" data-shape="rectangle">
+  <rect x="1744.8899999999996" y="1446.1399999999999" width="194.59599999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1842.1879999999996" y="1473.04" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1842.1879999999996" dy="-3.9000000000000012">DOCX</tspan><tspan x="1842.1879999999996" dy="16.900000000000002">POI 或 Pandoc+参考文档</tspan></text>
+</g>
+<g class="node" data-id="PDF_OUT" data-label="PDF
+iText 渲染" data-shape="rectangle">
+  <rect x="1967.4859999999996" y="1446.1399999999999" width="103.453" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2019.2124999999996" y="1473.04" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="2019.2124999999996" dy="-3.9000000000000012">PDF</tspan><tspan x="2019.2124999999996" dy="16.900000000000002">iText 渲染</tspan></text>
+</g>
+<g class="node" data-id="HTML_OUT" data-label="HTML" data-shape="rectangle">
+  <rect x="2098.9389999999994" y="1913.5749999999994" width="79.741" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2138.8094999999994" y="1932.0249999999994" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">HTML</text>
+</g>
+<g class="node" data-id="MD_OUT" data-label="Markdown" data-shape="rectangle">
+  <rect x="2206.6799999999994" y="1718.4249999999995" width="104.93499999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2259.1474999999996" y="1736.8749999999995" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Markdown</text>
+</g>
+<g class="node" data-id="API_EXPORT" data-label="POST /export-document" data-shape="rectangle">
+  <rect x="2339.6149999999993" y="1446.1399999999999" width="181.99899999999997" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2430.614499999999" y="1464.59" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">POST /export-document</text>
+</g>
+<g class="node" data-id="SAVE_OPT" data-label="登录用户?" data-shape="diamond">
+  <polygon points="2430.6144999999997,1554.3849999999998 2496.9345,1620.7049999999997 2430.6144999999997,1687.0249999999996 2364.2944999999995,1620.7049999999997" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2430.6144999999997" y="1620.7049999999997" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">登录用户?</text>
+</g>
+<g class="node" data-id="SAVE" data-label="POST /save-document/{id}
+写入 document_records" data-shape="rectangle">
+  <rect x="2261.5505833333327" y="1803.3249999999996" width="194.59599999999995" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2358.8485833333325" y="1830.2249999999997" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="2358.8485833333325" dy="-3.9000000000000012">POST /save-document/{id}</tspan><tspan x="2358.8485833333325" dy="16.900000000000002">写入 document_records</tspan></text>
+</g>
+<g class="node" data-id="DOWNLOAD" data-label="浏览器下载文件" data-shape="rectangle">
+  <rect x="2484.1465833333327" y="1913.5749999999994" width="145.69" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2556.9915833333325" y="1932.0249999999994" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">浏览器下载文件</text>
+</g>
+<g class="node" data-id="HISTORY" data-label="GET /export-history
+历史侧边栏" data-shape="rectangle">
+  <rect x="2279.705083333333" y="1913.5749999999994" width="158.287" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2358.848583333333" y="1940.4749999999995" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="2358.848583333333" dy="-3.9000000000000012">GET /export-history</tspan><tspan x="2358.848583333333" dy="16.900000000000002">历史侧边栏</tspan></text>
+</g>
+<g class="node" data-id="LOAD" data-label="加载历史格式/内容" data-shape="rectangle">
+  <rect x="2167.1103333333326" y="2006.9249999999995" width="164.21499999999997" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2249.2178333333327" y="2025.3749999999995" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">加载历史格式/内容</text>
+</g>
+<g class="node" data-id="DELETE" data-label="DELETE /delete-document/{id}" data-shape="rectangle">
+  <rect x="2359.3253333333328" y="2006.9249999999995" width="218.30799999999996" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2468.4793333333328" y="2025.3749999999995" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">DELETE /delete-document/{id}</text>
+</g>
+<g class="node" data-id="PANDOC_FLOW" data-label="上传 → 转 MD → 按格式导出
+保留表格/图片" data-shape="rectangle">
+  <rect x="2478.0472499999996" y="1361.8949999999998" width="206.45199999999994" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2581.2732499999997" y="1388.7949999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="2581.2732499999997" dy="-3.9000000000000012">上传 → 转 MD → 按格式导出</tspan><tspan x="2581.2732499999997" dy="16.900000000000002">保留表格/图片</tspan></text>
+</g>
+</svg></div>
+
+<hr>
+<h2 id="四、用户与会员业务流程"><a href="#四、用户与会员业务流程" class="headerlink" title="四、用户与会员业务流程"></a>四、用户与会员业务流程</h2><div class="beautiful-mermaid"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1293.1029999999998 642.25" width="1293.1029999999998" height="642.25" style="--bg:var(--bm-bg);--fg:var(--bm-fg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<g class="subgraph" data-id="Auth" data-label="认证流程">
+  <rect x="40" y="87.05000000000003" width="608.789" height="195.60000000000002" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="40" y="87.05000000000003" width="608.789" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="52" y="101.05000000000003" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">认证流程</text>
+</g>
+<g class="subgraph" data-id="UserTypes" data-label="用户类型">
+  <rect x="708.789" y="40" width="204.36599999999999" height="277.40000000000003" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="708.789" y="40" width="204.36599999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="720.789" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">用户类型</text>
+</g>
+<g class="subgraph" data-id="Quota" data-label="配额与会员 数据模型已定义">
+  <rect x="973.155" y="47.29999999999998" width="279.9479999999999" height="260.5" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="973.155" y="47.29999999999998" width="279.9479999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="985.155" y="61.29999999999998" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">配额与会员 数据模型已定义</text>
+</g>
+<g class="subgraph" data-id="FrontendOnly" data-label="前端已调用·后端未实现">
+  <rect x="442.272" y="310.65" width="212.517" height="291.6" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="442.272" y="310.65" width="212.517" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="454.272" y="324.65" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">前端已调用·后端未实现</text>
+</g>
+<polyline class="edge" data-from="JWT" data-to="R" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="608.372,198.85000000000002 673.6663125,198.85000000000002 673.6663125,192.70000000000002 738.9606249999999,192.70000000000002" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="JWT" data-to="W" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="608.372,198.85000000000002 673.6663125,198.85000000000002 673.6663125,274.5 738.9606249999999,274.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="V" data-to="FQ" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="911.3266249999999,110.9 955.155,110.9 955.155,103.6 989.155,103.6" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="R" data-to="FQ" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="873.535625,192.70000000000002 931.3453125,192.70000000000002 931.3453125,109.74999999999999 989.155,109.74999999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="R" data-to="VIP" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="873.535625,192.70000000000002 931.3453125,192.70000000000002 931.3453125,183.1 989.155,183.1" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="R" data-to="ORDER" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="873.535625,192.70000000000002 931.3453125,192.70000000000002 931.3453125,264.9 989.155,264.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="REG" data-to="LOGIN" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="216.51,239.75000000000006 303.042,239.75000000000006" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="LOGIN" data-to="JWT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="420.57399999999996,239.75000000000003 470.8974999999999,239.75000000000003 470.8974999999999,198.85000000000002 482.68899999999996,198.85000000000002" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="WX" data-to="JWT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="459.10599999999994,157.95000000000002 470.8974999999999,157.95000000000002 470.8974999999999,198.85000000000002 482.68899999999996,198.85000000000002" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<g class="node" data-id="REG" data-label="POST /register
+用户名+邮箱+密码" data-shape="rectangle">
+  <rect x="56" y="212.85000000000002" width="160.51" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="136.255" y="239.75000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="136.255" dy="-3.9000000000000012">POST /register</tspan><tspan x="136.255" dy="16.900000000000002">用户名+邮箱+密码</tspan></text>
+</g>
+<g class="node" data-id="LOGIN" data-label="POST /token
+JWT 30分钟" data-shape="rectangle">
+  <rect x="303.042" y="212.85000000000002" width="117.532" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="361.808" y="239.75000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="361.808" dy="-3.9000000000000012">POST /token</tspan><tspan x="361.808" dy="16.900000000000002">JWT 30分钟</tspan></text>
+</g>
+<g class="node" data-id="JWT" data-label="Bearer Token" data-shape="rectangle">
+  <rect x="482.68899999999996" y="180.40000000000003" width="125.68299999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="545.5305" y="198.85000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Bearer Token</text>
+</g>
+<g class="node" data-id="WX" data-label="微信登录
+AuthService.wechatLogin" data-shape="rectangle">
+  <rect x="264.51" y="131.05" width="194.59599999999995" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="361.808" y="157.95000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="361.808" dy="-3.9000000000000012">微信登录</tspan><tspan x="361.808" dy="16.900000000000002">AuthService.wechatLogin</tspan></text>
+</g>
+<g class="node" data-id="V" data-label="游客 VisitorUser
+device_id + fingerprint" data-shape="rectangle">
+  <rect x="738.9606249999999" y="84" width="172.36599999999999" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="825.1436249999999" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="825.1436249999999" dy="-3.9000000000000012">游客 VisitorUser</tspan><tspan x="825.1436249999999" dy="16.900000000000002">device_id + fingerprint</tspan></text>
+</g>
+<g class="node" data-id="R" data-label="注册用户 User
+username/email" data-shape="rectangle">
+  <rect x="738.9606249999999" y="165.8" width="134.575" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="806.248125" y="192.70000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="806.248125" dy="-3.9000000000000012">注册用户 User</tspan><tspan x="806.248125" dy="16.900000000000002">username/email</tspan></text>
+</g>
+<g class="node" data-id="W" data-label="微信用户
+openid" data-shape="rectangle">
+  <rect x="738.9606249999999" y="247.60000000000002" width="101.22999999999999" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="789.575625" y="274.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="789.575625" dy="-3.9000000000000012">微信用户</tspan><tspan x="789.575625" dy="16.900000000000002">openid</tspan></text>
+</g>
+<g class="node" data-id="FQ" data-label="free_quota 免费次数" data-shape="rectangle">
+  <rect x="989.155" y="91.29999999999998" width="167.179" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1072.7445" y="109.74999999999999" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">free_quota 免费次数</text>
+</g>
+<g class="node" data-id="VIP" data-label="is_vip / member_type
+free·times·monthly·annual·lifetime" data-shape="rectangle">
+  <rect x="989.155" y="156.2" width="247.94799999999992" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1113.129" y="183.1" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1113.129" dy="-3.9000000000000012">is_vip / member_type</tspan><tspan x="1113.129" dy="16.900000000000002">free·times·monthly·annual·lifetime</tspan></text>
+</g>
+<g class="node" data-id="ORDER" data-label="OrderRecord 订单
+pending/success/failed" data-shape="rectangle">
+  <rect x="989.155" y="238" width="179.77599999999995" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1079.043" y="264.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1079.043" dy="-3.9000000000000012">OrderRecord 订单</tspan><tspan x="1079.043" dy="16.900000000000002">pending/success/failed</tspan></text>
+</g>
+<g class="node" data-id="PAY" data-label="/user/pay 支付" data-shape="rectangle">
+  <rect x="482.725" y="419.54999999999995" width="131.611" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="548.5305000000001" y="437.99999999999994" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">/user/pay 支付</text>
+</g>
+<g class="node" data-id="MEM" data-label="/user/membership 会员" data-shape="rectangle">
+  <rect x="482.68899999999996" y="484.45" width="180.517" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="572.9475" y="502.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">/user/membership 会员</text>
+</g>
+<g class="node" data-id="CONSUME" data-label="/user/consume 扣配额" data-shape="rectangle">
+  <rect x="482.68899999999996" y="354.65" width="177.55299999999997" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="571.4654999999999" y="373.09999999999997" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">/user/consume 扣配额</text>
+</g>
+<g class="node" data-id="FB" data-label="/feedback/* 反馈评论" data-shape="rectangle">
+  <rect x="482.68899999999996" y="549.35" width="173.107" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="569.2425" y="567.8000000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">/feedback/* 反馈评论</text>
+</g>
+</svg></div>
+
+<p>说明：会员、支付、反馈相关 API 在前端 <code>api.js</code> 中有定义，但当前后端 <strong>尚无对应 Controller</strong>，属于预留能力；实体与 Repository 已存在。</p>
+<hr>
+<h2 id="五、AI-增强文档处理流程（独立管线）"><a href="#五、AI-增强文档处理流程（独立管线）" class="headerlink" title="五、AI 增强文档处理流程（独立管线）"></a>五、AI 增强文档处理流程（独立管线）</h2><div class="beautiful-mermaid"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 836.4233999999999 1674.982" width="836.4233999999999" height="1674.982" style="--bg:var(--bm-bg);--fg:var(--bm-fg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<polyline class="edge" data-from="AI_START" data-to="PARSE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="455.9094999999999,76.9 455.9095,124.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PARSE" data-to="PARSE_DOC" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="上传文件" points="424.602,218.8225 424.602,500.552 234.01056666666653,500.552 234.01056666666653,592.8520000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PARSE" data-to="PARSE_MD" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="Markdown" points="455.9095,250.13 455.9095,512.552 354.5350666666665,512.552 354.5350666666665,694.652" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PARSE" data-to="PARSE_TXT" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="纯文本" points="487.2169999999999,218.82250000000005 487.2169999999999,262.13 692.8268999999998,262.13 692.8268999999998,342.43" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PARSE_DOC" data-to="IR" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="234.01056666666653,646.652 234.01056666666653,767.5519999999999 421.8805999999999,767.5519999999999 421.8805999999999,779.5519999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PARSE_MD" data-to="IR" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="354.5350666666665,731.5519999999999 354.5350666666665,755.5519999999999 456.5019999999999,755.5519999999999 456.5019999999999,779.5519999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="PARSE_TXT" data-to="LLM_STRUCT" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="692.8268999999998,396.23 692.8269,444.23000000000013" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="LLM_STRUCT" data-to="LLM_MD" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="是" points="670.4732333333332,555.9983333333333 670.4732333333332,614.3520000000001 598.6200666666664,614.3520000000001 598.6200666666664,694.652" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="LLM_STRUCT" data-to="IR" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="否" points="715.1805666666667,555.9983333333333 715.1805666666664,767.5519999999999 525.7447999999999,767.5519999999999 525.7447999999999,779.5519999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="LLM_MD" data-to="IR" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="598.6200666666664,731.5519999999999 598.6200666666664,755.5519999999999 491.1233999999999,755.5519999999999 491.1233999999999,779.5519999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="IR" data-to="FORMAT_AI" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="473.8126999999999,833.3519999999999 473.8126999999999,857.3519999999999 391.016,857.3519999999999 391.016,881.3519999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="FORMAT_AI" data-to="NL" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="自然语言" points="359.7085,975.2744999999999 359.7085,1066.5819999999999 136.9275,1066.5819999999999 136.9275,1143.3319999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="FORMAT_AI" data-to="TPL" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="模板" points="391.016,1006.5819999999999 391.016,1143.3319999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="FORMAT_AI" data-to="MERGE" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="多源合并" points="422.3235,975.2744999999999 422.3235,1083.4819999999997 649.5504999999998,1083.4819999999997 649.5504999999998,1143.3319999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="NL" data-to="STYLE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="136.9275,1197.1319999999998 136.9275,1210.9069999999997 336.90150833333337,1210.9069999999997 336.90150833333337,1224.6819999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="TPL" data-to="STYLE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="391.01599999999996,1197.1319999999998 391.01599999999996,1210.9069999999997 336.90150833333337,1210.9069999999997 336.90150833333337,1224.6819999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="MERGE" data-to="STYLE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="649.5504999999998,1180.232 649.5504999999998,1210.9069999999997 336.90150833333337,1210.9069999999997 336.90150833333337,1224.6819999999998" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="IR" data-to="GEN" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="473.8126999999999,833.3519999999999 473.8126999999999,857.3519999999999 517.8379666666666,857.3519999999999 517.8379666666666,1309.5819999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="STYLE" data-to="GEN" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="336.90150833333337,1261.5819999999999 336.90150833333337,1297.5819999999999 479.10679999999996,1297.5819999999999 479.10679999999996,1309.5819999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="GEN" data-to="ENGINE" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="517.8379666666666,1346.482 517.8379666666666,1394.482" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="ENGINE" data-to="EXEC" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="517.8379666666666,1448.282 517.8379666666665,1496.282" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EXEC" data-to="DOCX_AI" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="517.8379666666665,1550.0819999999999 517.8379666666666,1598.0819999999999" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<g class="edge-label" data-from="PARSE" data-to="PARSE_DOC" data-label="上传文件">
+  <rect x="201.01056666666653" y="519.552" width="65.17" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="233.59556666666654" y="534.702" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">上传文件</text>
+</g>
+<g class="edge-label" data-from="PARSE" data-to="PARSE_MD" data-label="Markdown">
+  <rect x="320.0350666666665" y="519.552" width="68.14" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="354.1050666666665" y="534.702" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">Markdown</text>
+</g>
+<g class="edge-label" data-from="PARSE" data-to="PARSE_TXT" data-label="纯文本">
+  <rect x="665.8268999999998" y="269.13" width="53.29" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="692.4718999999998" y="284.28" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">纯文本</text>
+</g>
+<g class="edge-label" data-from="LLM_STRUCT" data-to="LLM_MD" data-label="是">
+  <rect x="583.6200666666664" y="621.3520000000001" width="29.53" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="598.3850666666664" y="636.5020000000001" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">是</text>
+</g>
+<g class="edge-label" data-from="LLM_STRUCT" data-to="IR" data-label="否">
+  <rect x="700.1805666666664" y="621.3520000000001" width="29.53" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="714.9455666666664" y="636.5020000000001" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">否</text>
+</g>
+<g class="edge-label" data-from="FORMAT_AI" data-to="NL" data-label="自然语言">
+  <rect x="103.92750000000001" y="1073.5819999999999" width="65.17" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="136.51250000000002" y="1088.732" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">自然语言</text>
+</g>
+<g class="edge-label" data-from="FORMAT_AI" data-to="TPL" data-label="模板">
+  <rect x="370.01599999999996" y="1049.5819999999999" width="41.41" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="390.72099999999995" y="1064.732" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">模板</text>
+</g>
+<g class="edge-label" data-from="FORMAT_AI" data-to="MERGE" data-label="多源合并">
+  <rect x="616.5504999999998" y="1090.4819999999997" width="65.17" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="649.1354999999999" y="1105.6319999999998" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">多源合并</text>
+</g>
+<g class="node" data-id="AI_START" data-label="AI 文档处理" data-shape="stadium">
+  <rect x="398.25499999999994" y="40" width="115.30900000000001" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="455.9094999999999" y="58.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">AI 文档处理</text>
+</g>
+<g class="node" data-id="PARSE" data-label="解析入口" data-shape="diamond">
+  <polygon points="455.9095,124.89999999999999 518.5245,187.515 455.9095,250.13 393.29449999999997,187.515" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="455.9095" y="187.515" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">解析入口</text>
+</g>
+<g class="node" data-id="PARSE_DOC" data-label="POST /api/ai/parse-document
+docx→IR / 纯文本→IR" data-shape="rectangle">
+  <rect x="126.70906666666653" y="592.8520000000001" width="214.60299999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="234.01056666666653" y="619.7520000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="234.01056666666653" dy="-3.9000000000000012">POST /api/ai/parse-document</tspan><tspan x="234.01056666666653" dy="16.900000000000002">docx→IR / 纯文本→IR</tspan></text>
+</g>
+<g class="node" data-id="PARSE_MD" data-label="POST /api/ai/parse-markdown" data-shape="rectangle">
+  <rect x="245.01056666666653" y="694.652" width="219.049" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="354.5350666666665" y="713.1020000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">POST /api/ai/parse-markdown</text>
+</g>
+<g class="node" data-id="PARSE_TXT" data-label="POST /api/ai/parse-plaintext
+可选 LLM 结构化" data-shape="rectangle">
+  <rect x="589.2303999999999" y="342.43" width="207.19299999999996" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="692.8268999999999" y="369.33" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="692.8268999999999" dy="-3.9000000000000012">POST /api/ai/parse-plaintext</tspan><tspan x="692.8268999999999" dy="16.900000000000002">可选 LLM 结构化</tspan></text>
+</g>
+<g class="node" data-id="IR" data-label="DocumentIR 中间表示
+元素列表 + 元数据" data-shape="rectangle">
+  <rect x="387.2591999999999" y="779.5519999999999" width="173.107" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="473.8126999999999" y="806.4519999999999" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="473.8126999999999" dy="-3.9000000000000012">DocumentIR 中间表示</tspan><tspan x="473.8126999999999" dy="16.900000000000002">元素列表 + 元数据</tspan></text>
+</g>
+<g class="node" data-id="LLM_STRUCT" data-label="LLM 可用?" data-shape="diamond">
+  <polygon points="692.8268999999999,444.23 759.8879,511.29100000000005 692.8268999999999,578.3520000000001 625.7658999999999,511.29100000000005" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="692.8268999999999" y="511.29100000000005" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">LLM 可用?</text>
+</g>
+<g class="node" data-id="LLM_MD" data-label="LlmService.textToMarkdown" data-shape="rectangle">
+  <rect x="492.0595666666665" y="694.652" width="213.12099999999998" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="598.6200666666665" y="713.1020000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">LlmService.textToMarkdown</text>
+</g>
+<g class="node" data-id="FORMAT_AI" data-label="格式来源" data-shape="diamond">
+  <polygon points="391.016,881.3519999999999 453.63100000000003,943.9669999999999 391.016,1006.5819999999999 328.401,943.9669999999999" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="391.016" y="943.9669999999999" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">格式来源</text>
+</g>
+<g class="node" data-id="NL" data-label="POST /api/ai/parse-format
+描述 → StyleConfig" data-shape="rectangle">
+  <rect x="40" y="1143.3319999999999" width="193.855" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="136.9275" y="1170.232" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="136.9275" dy="-3.9000000000000012">POST /api/ai/parse-format</tspan><tspan x="136.9275" dy="16.900000000000002">描述 → StyleConfig</tspan></text>
+</g>
+<g class="node" data-id="TPL" data-label="POST /api/ai/get-template-format
+chinese_thesis·academic·business" data-shape="rectangle">
+  <rect x="261.855" y="1143.3319999999999" width="258.32199999999995" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="391.01599999999996" y="1170.232" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="391.01599999999996" dy="-3.9000000000000012">POST /api/ai/get-template-format</tspan><tspan x="391.01599999999996" dy="16.900000000000002">chinese_thesis·academic·business</tspan></text>
+</g>
+<g class="node" data-id="MERGE" data-label="POST /api/ai/merge-formats" data-shape="rectangle">
+  <rect x="548.1769999999999" y="1143.3319999999999" width="202.74699999999996" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="649.5504999999998" y="1161.782" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">POST /api/ai/merge-formats</text>
+</g>
+<g class="node" data-id="STYLE" data-label="StyleConfig 样式配置" data-shape="rectangle">
+  <rect x="251.83000833333338" y="1224.6819999999998" width="170.14299999999997" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="336.90150833333337" y="1243.1319999999998" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">StyleConfig 样式配置</text>
+</g>
+<g class="node" data-id="GEN" data-label="POST /api/ai/generate-document" data-shape="rectangle">
+  <rect x="401.64446666666663" y="1309.5819999999999" width="232.38699999999994" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="517.8379666666666" y="1328.032" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">POST /api/ai/generate-document</text>
+</g>
+<g class="node" data-id="ENGINE" data-label="CodeGenerationEngine
+IR+Style → python-docx 代码" data-shape="rectangle">
+  <rect x="413.8709666666666" y="1394.482" width="207.934" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="517.8379666666666" y="1421.382" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="517.8379666666666" dy="-3.9000000000000012">CodeGenerationEngine</tspan><tspan x="517.8379666666666" dy="16.900000000000002">IR+Style → python-docx 代码</tspan></text>
+</g>
+<g class="node" data-id="EXEC" data-label="执行 Python 脚本
+自我修正最多 3 次" data-shape="rectangle">
+  <rect x="439.0649666666666" y="1496.282" width="157.546" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="517.8379666666666" y="1523.182" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="517.8379666666666" dy="-3.9000000000000012">执行 Python 脚本</tspan><tspan x="517.8379666666666" dy="16.900000000000002">自我修正最多 3 次</tspan></text>
+</g>
+<g class="node" data-id="DOCX_AI" data-label="输出 .docx 文件" data-shape="rectangle">
+  <rect x="448.6979666666666" y="1598.0819999999999" width="138.28" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="517.8379666666666" y="1616.532" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">输出 .docx 文件</text>
+</g>
+<g class="node" data-id="STATUS" data-label="GET /api/ai/status
+LLM + 代码引擎状态" data-shape="rectangle">
+  <rect x="541.5640000000001" y="172.32999999999998" width="171.62499999999997" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="627.3765000000001" y="199.23" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="627.3765000000001" dy="-3.9000000000000012">GET /api/ai/status</tspan><tspan x="627.3765000000001" dy="16.900000000000002">LLM + 代码引擎状态</tspan></text>
+</g>
+</svg></div>
+
+<hr>
+<h2 id="六、辅助功能模块流程"><a href="#六、辅助功能模块流程" class="headerlink" title="六、辅助功能模块流程"></a>六、辅助功能模块流程</h2><div class="beautiful-mermaid"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3331.6039999999994 193.8" width="3331.6039999999994" height="193.8" style="--bg:var(--bm-bg);--fg:var(--bm-fg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<g class="subgraph" data-id="Analysis" data-label="文档分析 /analysis">
+  <rect x="40" y="40" width="854.3699999999999" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="40" y="40" width="854.3699999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="52" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">文档分析 /analysis</text>
+</g>
+<g class="subgraph" data-id="Image" data-label="图片 /extract-images">
+  <rect x="922.3699999999999" y="40" width="411.40099999999995" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="922.3699999999999" y="40" width="411.40099999999995" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="934.3699999999999" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">图片 /extract-images</text>
+</g>
+<g class="subgraph" data-id="MarkdownAPI" data-label="Markdown API /api">
+  <rect x="1361.7709999999997" y="40" width="556.933" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1361.7709999999997" y="40" width="556.933" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1373.7709999999997" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Markdown API /api</text>
+</g>
+<g class="subgraph" data-id="System" data-label="系统 /">
+  <rect x="1946.7039999999997" y="40" width="952.1819999999999" height="96.9" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="1946.7039999999997" y="40" width="952.1819999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="1958.7039999999997" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">系统 /</text>
+</g>
+<g class="subgraph" data-id="PreviewPages" data-label="独立页面">
+  <rect x="2926.8859999999995" y="40" width="364.71799999999996" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="2926.8859999999995" y="40" width="364.71799999999996" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="2938.8859999999995" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">独立页面</text>
+</g>
+<g class="node" data-id="A1" data-label="analyze-word-document
+文件基本信息" data-shape="rectangle">
+  <rect x="257.84799999999996" y="84" width="182.73999999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="349.21799999999996" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="349.21799999999996" dy="-3.9000000000000012">analyze-word-document</tspan><tspan x="349.21799999999996" dy="16.900000000000002">文件基本信息</tspan></text>
+</g>
+<g class="node" data-id="A2" data-label="analyze-document-elements
+表格·图片·段落·标题" data-shape="rectangle">
+  <rect x="468.58799999999997" y="84" width="204.96999999999994" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="571.073" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="571.073" dy="-3.9000000000000012">analyze-document-elements</tspan><tspan x="571.073" dy="16.900000000000002">表格·图片·段落·标题</tspan></text>
+</g>
+<g class="node" data-id="A3" data-label="generate-format-styles
+元数据 → CSS" data-shape="rectangle">
+  <rect x="56" y="84" width="173.84799999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="142.92399999999998" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="142.92399999999998" dy="-3.9000000000000012">generate-format-styles</tspan><tspan x="142.92399999999998" dy="16.900000000000002">元数据 → CSS</tspan></text>
+</g>
+<g class="node" data-id="A4" data-label="validate-format-settings
+校验+警告" data-shape="rectangle">
+  <rect x="701.5579999999999" y="84" width="176.81199999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="789.9639999999998" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="789.9639999999998" dy="-3.9000000000000012">validate-format-settings</tspan><tspan x="789.9639999999998" dy="16.900000000000002">校验+警告</tspan></text>
+</g>
+<g class="node" data-id="I1" data-label="从 Word 提取图片
+POI / ZIP media" data-shape="rectangle">
+  <rect x="938.3699999999999" y="84" width="152.35899999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1014.5494999999999" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1014.5494999999999" dy="-3.9000000000000012">从 Word 提取图片</tspan><tspan x="1014.5494999999999" dy="16.900000000000002">POI / ZIP media</tspan></text>
+</g>
+<g class="node" data-id="I2" data-label="GET /images/{taskId}/{path}
+访问提取的图片" data-shape="rectangle">
+  <rect x="1118.7289999999998" y="84" width="199.04199999999994" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1218.2499999999998" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1218.2499999999998" dy="-3.9000000000000012">GET /images/{taskId}/{path}</tspan><tspan x="1218.2499999999998" dy="16.900000000000002">访问提取的图片</tspan></text>
+</g>
+<g class="node" data-id="M1" data-label="markdown-to-word
+MD → DOCX" data-shape="rectangle">
+  <rect x="1559.6119999999996" y="84" width="150.13599999999997" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1634.6799999999996" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1634.6799999999996" dy="-3.9000000000000012">markdown-to-word</tspan><tspan x="1634.6799999999996" dy="16.900000000000002">MD → DOCX</tspan></text>
+</g>
+<g class="node" data-id="M2" data-label="word-to-markdown
+按 document_id 读取" data-shape="rectangle">
+  <rect x="1737.7479999999996" y="84" width="164.95600000000002" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1820.2259999999997" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1820.2259999999997" dy="-3.9000000000000012">word-to-markdown</tspan><tspan x="1820.2259999999997" dy="16.900000000000002">按 document_id 读取</tspan></text>
+</g>
+<g class="node" data-id="M3" data-label="markdown-preview
+MD → HTML" data-shape="rectangle">
+  <rect x="1377.7709999999997" y="84" width="153.84099999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1454.6914999999997" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="1454.6914999999997" dy="-3.9000000000000012">markdown-preview</tspan><tspan x="1454.6914999999997" dy="16.900000000000002">MD → HTML</tspan></text>
+</g>
+<g class="node" data-id="S1" data-label="GET /health 健康检查" data-shape="rectangle">
+  <rect x="2229.019" y="84" width="171.62499999999997" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2314.8315" y="102.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">GET /health 健康检查</text>
+</g>
+<g class="node" data-id="S2" data-label="GET /format-templates 格式模板列表" data-shape="rectangle">
+  <rect x="2428.644" y="84" width="259.804" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2558.546" y="102.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">GET /format-templates 格式模板列表</text>
+</g>
+<g class="node" data-id="S3" data-label="GET /pandoc-status Pandoc 状态" data-shape="rectangle">
+  <rect x="1962.7039999999997" y="84" width="238.31499999999997" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2081.8614999999995" y="102.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">GET /pandoc-status Pandoc 状态</text>
+</g>
+<g class="node" data-id="S4" data-label="Swagger UI /api-docs" data-shape="rectangle">
+  <rect x="2716.4479999999994" y="84" width="166.438" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="2799.6669999999995" y="102.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Swagger UI /api-docs</text>
+</g>
+<g class="node" data-id="P1" data-label="/preview/:documentId
+DocumentPreviewView" data-shape="rectangle">
+  <rect x="2942.8859999999995" y="84" width="176.81199999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="3031.2919999999995" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="3031.2919999999995" dy="-3.9000000000000012">/preview/:documentId</tspan><tspan x="3031.2919999999995" dy="16.900000000000002">DocumentPreviewView</tspan></text>
+</g>
+<g class="node" data-id="P2" data-label="/login/callback
+OAuth 回调" data-shape="rectangle">
+  <rect x="3147.6979999999994" y="84" width="127.906" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="3211.6509999999994" y="110.9" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="3211.6509999999994" dy="-3.9000000000000012">/login/callback</tspan><tspan x="3211.6509999999994" dy="16.900000000000002">OAuth 回调</tspan></text>
+</g>
+</svg></div>
+
+<hr>
+<h2 id="七、功能清单（按模块）"><a href="#七、功能清单（按模块）" class="headerlink" title="七、功能清单（按模块）"></a>七、功能清单（按模块）</h2><h3 id="1-文档转换核心"><a href="#1-文档转换核心" class="headerlink" title="1. 文档转换核心"></a>1. 文档转换核心</h3><ul>
+<li>上传 Word（<code>.docx</code>&#x2F;<code>.doc</code>）、PDF → Markdown</li>
+<li>Pandoc 优先转换，失败回退 POI</li>
+<li>提取源文档格式（字体、段落、边距等）并回填前端</li>
+<li>保留图片到 <code>static/media</code>，生成可访问 URL</li>
+</ul>
+<h3 id="2-格式设置"><a href="#2-格式设置" class="headerlink" title="2. 格式设置"></a>2. 格式设置</h3><ul>
+<li>预设：<code>GB/T 7714</code>、中文论文、学术、商务等（<code>word-format-templates.json</code>）</li>
+<li>自定义：正文&#x2F;标题&#x2F;页眉页脚&#x2F;页码&#x2F;边距&#x2F;缩进&#x2F;行距&#x2F;列表&#x2F;图表</li>
+<li>格式校验、格式摘要悬停展示</li>
+<li>从历史记录恢复格式配置</li>
+</ul>
+<h3 id="3-预览"><a href="#3-预览" class="headerlink" title="3. 预览"></a>3. 预览</h3><ul>
+<li>快速预览：浏览器 HTML（marked + KaTeX + 实时 CSS）</li>
+<li>精确预览：服务端生成 PDF（<code>static/previews</code>）</li>
+<li>一致性自检：对比快速&#x2F;精确预览差异并打分</li>
+</ul>
+<h3 id="4-导出"><a href="#4-导出" class="headerlink" title="4. 导出"></a>4. 导出</h3><ul>
+<li>支持 DOCX、PDF、HTML、MD</li>
+<li>高保真：有 <code>document_id</code> 时用 Pandoc + 原始 Word 作参考文档</li>
+<li>Pandoc 高级转换：保留表格与图片</li>
+</ul>
+<h3 id="5-文档管理（需登录）"><a href="#5-文档管理（需登录）" class="headerlink" title="5. 文档管理（需登录）"></a>5. 文档管理（需登录）</h3><ul>
+<li>保存文档记录</li>
+<li>导出历史列表</li>
+<li>删除记录</li>
+<li>下载 original &#x2F; processed &#x2F; styled</li>
+<li>独立预览页 <code>/preview/:documentId</code></li>
+</ul>
+<h3 id="6-用户体系"><a href="#6-用户体系" class="headerlink" title="6. 用户体系"></a>6. 用户体系</h3><ul>
+<li>注册 &#x2F; 登录（JWT）</li>
+<li>游客（设备指纹 + 配额）</li>
+<li>微信登录（服务层已实现，需配置 <code>WECHAT_APP_ID/SECRET</code>）</li>
+<li>会员字段：VIP、次数包、会员类型（数据层就绪）</li>
+</ul>
+<h3 id="7-AI-增强（可选，llm-enabled-false-默认关闭）"><a href="#7-AI-增强（可选，llm-enabled-false-默认关闭）" class="headerlink" title="7. AI 增强（可选，llm.enabled=false 默认关闭）"></a>7. AI 增强（可选，<code>llm.enabled=false</code> 默认关闭）</h3><ul>
+<li>文档 → IR 中间表示</li>
+<li>自然语言 → 样式配置</li>
+<li>python-docx 代码生成 + 执行</li>
+<li>一站式生成 Word</li>
+</ul>
+<h3 id="8-其他"><a href="#8-其他" class="headerlink" title="8. 其他"></a>8. 其他</h3><ul>
+<li>图片提取与浏览</li>
+<li>文档元素分析</li>
+<li>反馈表单 UI（后端 API 待实现）</li>
+<li>会员权益 UI（后端 API 待实现）</li>
+<li>Docker 一键部署、Actuator 监控、OpenAPI 文档</li>
+</ul>
+<hr>
+<h2 id="八、数据实体关系"><a href="#八、数据实体关系" class="headerlink" title="八、数据实体关系"></a>八、数据实体关系</h2><div class="beautiful-mermaid"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 730.5600000000001 443.6666666666667" width="730.5600000000001" height="443.6666666666667" style="--bg:var(--bm-bg);--fg:var(--bm-fg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, monospace; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+</defs>
+<polyline class="er-relationship" data-entity1="User" data-entity2="DocumentRecord" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="user_id" points="239.6,287.33333333333337 417.56000000000006,287.33333333333337 417.56000000000006,156.33333333333334 497.56000000000006,156.33333333333334" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="VisitorUser" data-entity2="DocumentRecord" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="visitor user_id" points="239.6,101 497.56000000000006,101" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="er-relationship" data-entity1="User" data-entity2="OrderRecord" data-cardinality1="one" data-cardinality2="zero-many" data-identifying="true" data-label="user_id" points="239.6,342.6666666666667 497.56000000000006,342.6666666666667" fill="none" stroke="var(--_line)" stroke-width="1" />
+<g class="entity" data-id="User" data-label="User">
+  <rect x="86.20000000000002" y="232" width="153.39999999999998" height="166" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="86.20000000000002" y="232" width="153.39999999999998" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="162.9" y="249" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">User</text>
+  <line x1="86.20000000000002" y1="266" x2="239.6" y2="266" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="94.20000000000002" y="277" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">long</tspan></text>
+  <text x="231.6" y="277" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <text x="94.20000000000002" y="299" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="231.6" y="299" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">username</tspan></text>
+  <text x="94.20000000000002" y="321" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="231.6" y="321" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">openid</tspan></text>
+  <text x="94.20000000000002" y="343" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="231.6" y="343" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">member_type</tspan></text>
+  <text x="94.20000000000002" y="365" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="231.6" y="365" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">free_quota</tspan></text>
+  <text x="94.20000000000002" y="387" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">boolean</tspan></text>
+  <text x="231.6" y="387" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">is_vip</tspan></text>
+</g>
+<g class="entity" data-id="DocumentRecord" data-label="DocumentRecord">
+  <rect x="497.56000000000006" y="45.666666666666664" width="193" height="166" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="497.56000000000006" y="45.666666666666664" width="193" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="594.0600000000001" y="62.666666666666664" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">DocumentRecord</text>
+  <line x1="497.56000000000006" y1="79.66666666666666" x2="690.5600000000001" y2="79.66666666666666" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <rect x="503.56000000000006" y="83.66666666666666" width="22.31" height="14" rx="2" ry="2" fill="var(--_key-badge)" />
+  <text x="514.715" y="90.66666666666666" text-anchor="middle" dy="0.35em" font-size="9" font-weight="600" fill="var(--_text-sec)">PK</text>
+  <text x="533.87" y="90.66666666666666" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="682.5600000000001" y="90.66666666666666" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">document_id</tspan></text>
+  <text x="505.56000000000006" y="112.66666666666666" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="682.5600000000001" y="112.66666666666666" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">original_content</tspan></text>
+  <text x="505.56000000000006" y="134.66666666666666" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="682.5600000000001" y="134.66666666666666" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">processed_content</tspan></text>
+  <text x="505.56000000000006" y="156.66666666666666" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="682.5600000000001" y="156.66666666666666" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">format_metadata</tspan></text>
+  <text x="505.56000000000006" y="178.66666666666666" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="682.5600000000001" y="178.66666666666666" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">css_styles</tspan></text>
+  <text x="505.56000000000006" y="200.66666666666666" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="682.5600000000001" y="200.66666666666666" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">user_id</tspan></text>
+</g>
+<g class="entity" data-id="VisitorUser" data-label="VisitorUser">
+  <rect x="40" y="40" width="199.6" height="122" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="40" y="40" width="199.6" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="139.8" y="57" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">VisitorUser</text>
+  <line x1="40" y1="74" x2="239.6" y2="74" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="48" y="85" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">long</tspan></text>
+  <text x="231.6" y="85" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">id</tspan></text>
+  <text x="48" y="107" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="231.6" y="107" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">device_id</tspan></text>
+  <text x="48" y="129" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="231.6" y="129" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">device_fingerprint</tspan></text>
+  <text x="48" y="151" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">int</tspan></text>
+  <text x="231.6" y="151" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">free_quota</tspan></text>
+</g>
+<g class="entity" data-id="OrderRecord" data-label="OrderRecord">
+  <rect x="497.56000000000006" y="281.6666666666667" width="140" height="122" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="497.56000000000006" y="281.6666666666667" width="140" height="34" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="567.5600000000001" y="298.6666666666667" text-anchor="middle" font-size="13" font-weight="700" fill="var(--_text)" dy="4.55">OrderRecord</text>
+  <line x1="497.56000000000006" y1="315.6666666666667" x2="637.5600000000001" y2="315.6666666666667" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="505.56000000000006" y="326.6666666666667" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="629.5600000000001" y="326.6666666666667" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">order_id</tspan></text>
+  <text x="505.56000000000006" y="348.6666666666667" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="629.5600000000001" y="348.6666666666667" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">plan_id</tspan></text>
+  <text x="505.56000000000006" y="370.6666666666667" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">decimal</tspan></text>
+  <text x="629.5600000000001" y="370.6666666666667" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">amount</tspan></text>
+  <text x="505.56000000000006" y="392.6666666666667" class="mono" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-muted)">string</tspan></text>
+  <text x="629.5600000000001" y="392.6666666666667" class="mono" text-anchor="end" dy="0.35em" font-size="11" font-weight="400"><tspan fill="var(--_text-sec)">status</tspan></text>
+</g>
+<line x1="243.6" y1="281.33333333333337" x2="243.6" y2="293.33333333333337" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="247.6" y1="281.33333333333337" x2="247.6" y2="293.33333333333337" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="163.33333333333334" x2="481.56000000000006" y2="156.33333333333334" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="156.33333333333334" x2="481.56000000000006" y2="156.33333333333334" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="149.33333333333334" x2="481.56000000000006" y2="156.33333333333334" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="477.56000000000006" cy="156.33333333333334" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="243.6" y1="95" x2="243.6" y2="107" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="247.6" y1="95" x2="247.6" y2="107" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="108" x2="481.56000000000006" y2="101" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="101" x2="481.56000000000006" y2="101" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="94" x2="481.56000000000006" y2="101" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="477.56000000000006" cy="101" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="243.6" y1="336.6666666666667" x2="243.6" y2="348.6666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="247.6" y1="336.6666666666667" x2="247.6" y2="348.6666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="349.6666666666667" x2="481.56000000000006" y2="342.6666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="342.6666666666667" x2="481.56000000000006" y2="342.6666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<line x1="493.56000000000006" y1="335.6666666666667" x2="481.56000000000006" y2="342.6666666666667" stroke="var(--_line)" stroke-width="1.25" />
+<circle cx="477.56000000000006" cy="342.6666666666667" r="4" fill="var(--bg)" stroke="var(--_line)" stroke-width="1.25" />
+<rect x="394.3210000000001" y="260.6633333333334" width="46.478" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="417.56000000000006" y="270.8133333333334" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">user_id</text>
+<rect x="329.6" y="90.85" width="77.96000000000001" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="368.58000000000004" y="101" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">visitor user_id</text>
+<rect x="345.34100000000007" y="332.5166666666667" width="46.478" height="20.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="0.5" />
+<text x="368.58000000000004" y="342.6666666666667" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">user_id</text>
+</svg></div>
+
+<hr>
+<h2 id="九、部署与请求路径"><a href="#九、部署与请求路径" class="headerlink" title="九、部署与请求路径"></a>九、部署与请求路径</h2><div class="beautiful-mermaid"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 634.43 550" width="634.43" height="550" style="--bg:var(--bm-bg);--fg:var(--bm-fg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="seq-arrow" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto-start-reverse">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" />
+  </marker>
+  <marker id="seq-arrow-open" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto-start-reverse">
+    <polyline points="0 0, 8 2.5, 0 5" fill="none" stroke="var(--_arrow)" stroke-width="1" />
+  </marker>
+</defs>
+<line class="lifeline" data-actor="U" x1="84.025" y1="70" x2="84.025" y2="520" stroke="var(--_line)" stroke-width="0.75" stroke-dasharray="6 4" />
+<line class="lifeline" data-actor="N" x1="228.37" y1="70" x2="228.37" y2="520" stroke="var(--_line)" stroke-width="0.75" stroke-dasharray="6 4" />
+<line class="lifeline" data-actor="B" x1="386.4235" y1="70" x2="386.4235" y2="520" stroke="var(--_line)" stroke-width="0.75" stroke-dasharray="6 4" />
+<line class="lifeline" data-actor="S" x1="549.2935" y1="70" x2="549.2935" y2="520" stroke="var(--_line)" stroke-width="0.75" stroke-dasharray="6 4" />
+<g class="message" data-from="U" data-to="N" data-label="访问 SPA" data-line-style="solid" data-arrow-head="filled" data-self="false">
+  <line x1="84.025" y1="90" x2="228.37" y2="90" stroke="var(--_line)" stroke-width="1" marker-end="url(#seq-arrow)" />
+  <text x="156.1975" y="80" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">访问 SPA</text>
+</g>
+<g class="message" data-from="N" data-to="U" data-label="index.html + Vue 资源" data-line-style="solid" data-arrow-head="filled" data-self="false">
+  <line x1="228.37" y1="130" x2="84.025" y2="130" stroke="var(--_line)" stroke-width="1" marker-end="url(#seq-arrow)" />
+  <text x="156.1975" y="120" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">index.html + Vue 资源</text>
+</g>
+<g class="message" data-from="U" data-to="N" data-label="POST /upload-word-document" data-line-style="solid" data-arrow-head="filled" data-self="false">
+  <line x1="84.025" y1="170" x2="228.37" y2="170" stroke="var(--_line)" stroke-width="1" marker-end="url(#seq-arrow)" />
+  <text x="156.1975" y="160" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">POST /upload-word-document</text>
+</g>
+<g class="message" data-from="N" data-to="B" data-label="代理到后端" data-line-style="solid" data-arrow-head="filled" data-self="false">
+  <line x1="228.37" y1="210" x2="386.4235" y2="210" stroke="var(--_line)" stroke-width="1" marker-end="url(#seq-arrow)" />
+  <text x="307.39675" y="200" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">代理到后端</text>
+</g>
+<g class="message" data-from="B" data-to="S" data-label="保存文件 + 写库" data-line-style="solid" data-arrow-head="filled" data-self="false">
+  <line x1="386.4235" y1="250" x2="549.2935" y2="250" stroke="var(--_line)" stroke-width="1" marker-end="url(#seq-arrow)" />
+  <text x="467.8585" y="240" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">保存文件 + 写库</text>
+</g>
+<g class="message" data-from="B" data-to="N" data-label="Markdown + 格式元数据" data-line-style="dashed" data-arrow-head="filled" data-self="false">
+  <line x1="386.4235" y1="290" x2="228.37" y2="290" stroke="var(--_line)" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#seq-arrow)" />
+  <text x="307.39675" y="280" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">Markdown + 格式元数据</text>
+</g>
+<g class="message" data-from="N" data-to="U" data-label="JSON 响应" data-line-style="dashed" data-arrow-head="filled" data-self="false">
+  <line x1="228.37" y1="330" x2="84.025" y2="330" stroke="var(--_line)" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#seq-arrow)" />
+  <text x="156.1975" y="320" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">JSON 响应</text>
+</g>
+<g class="message" data-from="U" data-to="N" data-label="POST /export-document" data-line-style="solid" data-arrow-head="filled" data-self="false">
+  <line x1="84.025" y1="370" x2="228.37" y2="370" stroke="var(--_line)" stroke-width="1" marker-end="url(#seq-arrow)" />
+  <text x="156.1975" y="360" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">POST /export-document</text>
+</g>
+<g class="message" data-from="B" data-to="B" data-label="POI/Pandoc/iText 生成文件" data-line-style="solid" data-arrow-head="filled" data-self="true">
+  <polyline points="386.4235,410 416.4235,410 416.4235,430 386.4235,430" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#seq-arrow)" />
+  <text x="424.4235" y="420" font-size="11" text-anchor="start" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">POI/Pandoc/iText 生成文件</text>
+</g>
+<g class="message" data-from="B" data-to="U" data-label="文件流下载" data-line-style="dashed" data-arrow-head="filled" data-self="false">
+  <line x1="386.4235" y1="480" x2="84.025" y2="480" stroke="var(--_line)" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#seq-arrow)" />
+  <text x="235.22424999999998" y="470" font-size="11" text-anchor="middle" font-weight="400" fill="var(--_text-muted)" dy="3.8499999999999996">文件流下载</text>
+</g>
+<g class="actor" data-id="U" data-label="用户浏览器" data-type="participant">
+  <rect x="30.000000000000007" y="30" width="108.05" height="40" rx="4" ry="4" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="84.025" y="50" font-size="13" text-anchor="middle" font-weight="500" fill="var(--_text)" dy="4.55">用户浏览器</text>
+</g>
+<g class="actor" data-id="N" data-label="Nginx:8080" data-type="participant">
+  <rect x="178.05" y="30" width="100.64" height="40" rx="4" ry="4" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="228.37" y="50" font-size="13" text-anchor="middle" font-weight="500" fill="var(--_text)" dy="4.55">Nginx:8080</text>
+</g>
+<g class="actor" data-id="B" data-label="Spring Boot:8000" data-type="participant">
+  <rect x="318.69" y="30" width="135.467" height="40" rx="4" ry="4" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="386.4235" y="50" font-size="13" text-anchor="middle" font-weight="500" fill="var(--_text)" dy="4.55">Spring Boot:8000</text>
+</g>
+<g class="actor" data-id="S" data-label="SQLite/Static" data-type="participant">
+  <rect x="494.157" y="30" width="110.273" height="40" rx="4" ry="4" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="549.2935" y="50" font-size="13" text-anchor="middle" font-weight="500" fill="var(--_text)" dy="4.55">SQLite/Static</text>
+</g>
+</svg></div>
+
+<hr>
+<h2 id="十、总结"><a href="#十、总结" class="headerlink" title="十、总结"></a>十、总结</h2><p><strong>Transfer Words</strong> 的核心价值是：把 Word&#x2F;PDF 转为可编辑的 Markdown，在 Web 端配置学术&#x2F;公文等版式，再通过 Pandoc&#x2F;POI&#x2F;iText 导出为高保真 Word 或 PDF；并可选走 AI 管线（IR → 样式 → python-docx）做智能排版。</p>
+<p>当前实现最完整的是 <strong>文档转换主链路</strong>；<strong>会员支付、反馈、部分配额接口</strong> 在前端已有调用，后端 Controller 尚未落地，分析时按「预留功能」理解即可。</p>
+<p>如需针对某一模块（例如仅 AI 管线、仅 Pandoc 导出、或微信小程序流程）单独拆成更细的时序图，可以说明要聚焦的部分。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://daiyafeigithub.github.io/everyone">Flynn</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://daiyafeigithub.github.io/everyone/2026/05/21/transfer%E4%B8%9A%E5%8A%A1%E5%85%A8%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D-1779371510124/">https://daiyafeigithub.github.io/everyone/2026/05/21/transfer%E4%B8%9A%E5%8A%A1%E5%85%A8%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D-1779371510124/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://daiyafeigithub.github.io/everyone" target="_blank">每日一</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/everyone/tags/AI%E9%A1%B9%E7%9B%AE/">AI项目</a></div><div class="post-share"><div class="social-share" data-image="https://api.dujin.org/bing/1920.php" data-sites="wechat,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/everyone/2025/11/04/Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-1762234868821/" title="Redis的主从复制"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://source-trace-system-1256330935.cos.ap-beijing.myqcloud.com/images/2025/11/article-1762235345001.png" onerror="onerror=null;src='/everyone/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Redis的主从复制</div></div><div class="info-2"><div class="info-item-1">为什么要进行主从复制数据备份：主从复制实现了数据的热备份，是持久化之外的一种数据冗余方式。故障恢复：当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复。读写分离：由主节点提供写服务，由从节点提供读服务，提高Redis服务器的并发量。Redis主从复制（Master-Slave Replication）是Redis实现数据备份、读写分离和负载均衡的核心机制，其核心原理是从节点（Slave）通过复制主节点（Master）的数据，保持与主节点数据一致，从而实现“主写从读”的架构。 主从复制的工作原理（三阶段）主从复制的过程可分为连接建立、数据同步、命令传播三个核心阶段，以下是详细流程： 1. 连接建立阶段（从节点发现主节点） 配置主节点：从节点通过 slaveof &lt;master-ip&gt; &lt;master-port&gt; 命令（或配置文件中 slaveof 配置）指定主节点地址，发起连接。 建立Socket连接：从节点会与主节点建立TCP长连接，用于后续数据传输。 身份验证：如果主节点配置了 requirepass（访问密码），从节点必须通过 mastera...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/everyone/img/avatar.png" onerror="this.onerror=null;this.src='/everyone/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Flynn</div><div class="author-info-description">热爱生活</div><div class="site-data"><a href="/everyone/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/everyone/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/everyone/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com"><i class="fab fa-github"></i><span>关注我</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:example@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">不要吹灭你的灵感和你的想象力; 不要成为你的模型的奴隶。 ——文森特・梵高</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%A7%88"><span class="toc-number">1.</span> <span class="toc-text">一、系统概览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-number">2.</span> <span class="toc-text">二、系统架构图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%A0%B8%E5%BF%83%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B%EF%BC%88%E4%B8%BB%E8%B7%AF%E5%BE%84%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">三、核心业务流程（主路径）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%94%A8%E6%88%B7%E4%B8%8E%E4%BC%9A%E5%91%98%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">四、用户与会员业务流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81AI-%E5%A2%9E%E5%BC%BA%E6%96%87%E6%A1%A3%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%EF%BC%88%E7%8B%AC%E7%AB%8B%E7%AE%A1%E7%BA%BF%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">五、AI 增强文档处理流程（独立管线）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%BE%85%E5%8A%A9%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97%E6%B5%81%E7%A8%8B"><span class="toc-number">6.</span> <span class="toc-text">六、辅助功能模块流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%8A%9F%E8%83%BD%E6%B8%85%E5%8D%95%EF%BC%88%E6%8C%89%E6%A8%A1%E5%9D%97%EF%BC%89"><span class="toc-number">7.</span> <span class="toc-text">七、功能清单（按模块）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%96%87%E6%A1%A3%E8%BD%AC%E6%8D%A2%E6%A0%B8%E5%BF%83"><span class="toc-number">7.1.</span> <span class="toc-text">1. 文档转换核心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A0%BC%E5%BC%8F%E8%AE%BE%E7%BD%AE"><span class="toc-number">7.2.</span> <span class="toc-text">2. 格式设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%A2%84%E8%A7%88"><span class="toc-number">7.3.</span> <span class="toc-text">3. 预览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%AF%BC%E5%87%BA"><span class="toc-number">7.4.</span> <span class="toc-text">4. 导出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%96%87%E6%A1%A3%E7%AE%A1%E7%90%86%EF%BC%88%E9%9C%80%E7%99%BB%E5%BD%95%EF%BC%89"><span class="toc-number">7.5.</span> <span class="toc-text">5. 文档管理（需登录）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E7%94%A8%E6%88%B7%E4%BD%93%E7%B3%BB"><span class="toc-number">7.6.</span> <span class="toc-text">6. 用户体系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-AI-%E5%A2%9E%E5%BC%BA%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%8Cllm-enabled-false-%E9%BB%98%E8%AE%A4%E5%85%B3%E9%97%AD%EF%BC%89"><span class="toc-number">7.7.</span> <span class="toc-text">7. AI 增强（可选，llm.enabled&#x3D;false 默认关闭）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E5%85%B6%E4%BB%96"><span class="toc-number">7.8.</span> <span class="toc-text">8. 其他</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E6%95%B0%E6%8D%AE%E5%AE%9E%E4%BD%93%E5%85%B3%E7%B3%BB"><span class="toc-number">8.</span> <span class="toc-text">八、数据实体关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E9%83%A8%E7%BD%B2%E4%B8%8E%E8%AF%B7%E6%B1%82%E8%B7%AF%E5%BE%84"><span class="toc-number">9.</span> <span class="toc-text">九、部署与请求路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">10.</span> <span class="toc-text">十、总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/everyone/2026/05/21/transfer%E4%B8%9A%E5%8A%A1%E5%85%A8%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D-1779371510124/" title="transfer业务全流程介绍"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/bing/1920.php" onerror="this.onerror=null;this.src='/everyone/img/404.jpg'" alt="transfer业务全流程介绍"/></a><div class="content"><a class="title" href="/everyone/2026/05/21/transfer%E4%B8%9A%E5%8A%A1%E5%85%A8%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D-1779371510124/" title="transfer业务全流程介绍">transfer业务全流程介绍</a><time datetime="2026-05-21T13:49:43.992Z" title="发表于 2026-05-21 21:49:43">2026-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/everyone/2025/11/04/Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-1762234868821/" title="Redis的主从复制"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://source-trace-system-1256330935.cos.ap-beijing.myqcloud.com/images/2025/11/article-1762235345001.png" onerror="this.onerror=null;this.src='/everyone/img/404.jpg'" alt="Redis的主从复制"/></a><div class="content"><a class="title" href="/everyone/2025/11/04/Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6-1762234868821/" title="Redis的主从复制">Redis的主从复制</a><time datetime="2025-11-04T05:22:59.556Z" title="发表于 2025-11-04 13:22:59">2025-11-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/everyone/2025/11/01/%E4%BB%8ECHL%E5%88%B0AQS-1761997399971/" title="从CLH到AQS"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://source-trace-system-1256330935.cos.ap-beijing.myqcloud.com/images/2025/11/article-1762178921285.png" onerror="this.onerror=null;this.src='/everyone/img/404.jpg'" alt="从CLH到AQS"/></a><div class="content"><a class="title" href="/everyone/2025/11/01/%E4%BB%8ECHL%E5%88%B0AQS-1761997399971/" title="从CLH到AQS">从CLH到AQS</a><time datetime="2025-11-01T11:33:28.791Z" title="发表于 2025-11-01 19:33:28">2025-11-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/everyone/2025/10/30/hello-world/" title="悲观锁"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://source-trace-system-1256330935.cos.ap-beijing.myqcloud.com/images/2025/11/1762184146790-485662890.png" onerror="this.onerror=null;this.src='/everyone/img/404.jpg'" alt="悲观锁"/></a><div class="content"><a class="title" href="/everyone/2025/10/30/hello-world/" title="悲观锁">悲观锁</a><time datetime="2025-10-30T04:42:09.700Z" title="发表于 2025-10-30 12:42:09">2025-10-30</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://api.dujin.org/bing/1920.php);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Flynn</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/everyone/js/utils.js"></script><script src="/everyone/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

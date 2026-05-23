@@ -1,0 +1,26 @@
+/* beautiful-mermaid：亮/暗色 CSS 变量，随 Butterfly data-theme 切换 */
+:root {
+  --bm-bg: #ffffff;
+  --bm-fg: #18181b;
+}
+
+[data-theme='dark'] {
+  --bm-bg: #18181b;
+  --bm-fg: #a1a1aa;
+}
+
+.beautiful-mermaid {
+  margin: 1.2em 0;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(128, 128, 128, 0.2);
+  background: var(--bm-bg);
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.beautiful-mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
